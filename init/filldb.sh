@@ -49,8 +49,12 @@ init_user_and_db() {
      CREATE USER $filla_db_user WITH PASSWORD '$filla_db_password';
      CREATE DATABASE $filla_db_database;
      GRANT ALL PRIVILEGES ON DATABASE $filla_db_database TO $filla_db_user;
+     GRANT USAGE ON SCHEMA public TO $filla_db_user;
+     GRANT CREATE ON SCHEMA public TO $filla_db_user;
+     ALTER DATABASE $filla_db_database OWNER TO $filla_db_user;
 EOSQL
 }
+
 
 
 # Executes the main routine with environment variables
