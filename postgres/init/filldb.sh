@@ -18,7 +18,6 @@ readonly REQUIRED_ENV_VARS=(
 main() {
   check_env_vars_set
   init_user_and_db
-  fill_pg_hba
 }
 
 # Checks if all of the required environment
