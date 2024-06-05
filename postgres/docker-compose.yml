@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:latest
+    command:
+      - -c
+      - config_file=/etc/postgresconf/my-postgres.conf
+      - -c
+      - hba_file=/etc/postgresconf_hba/pg_hba.conf
+    restart: always
+    environment:
+      FILLA_DB_USER: /run/secrets/filla_db_user
+      FILLA_DB_PASSWORD: /run/secrets/filla_db_password
+      FILLA_DB_DATABASE:  /run/secrets/filla_db_database
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+      - ./conf/:/etc/postgresconf/
+      - ./hba/:/etc/postgresconf_hba/
+      - ./init/:/docker-entrypoint-initdb.d/
+    secrets:
+      - postgres_user
+      - postgres_password
+      - filla_db_user
+      - filla_db_password
+      - filla_db_database
+volumes:
+  db:
+    driver: local
+
+secrets:
+  postgres_user:
+    file: ./postgres_user.secret
+  postgres_password:
+    file: ./postgres_password.secret
+  filla_db_user:
+    file: ./filla_db_user.secret
+  filla_db_password:
+    file: ./filla_db_password.secret
+  filla_db_database:
+    file: ./filla_db_database.secret
