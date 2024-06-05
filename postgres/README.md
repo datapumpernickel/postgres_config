@@ -37,7 +37,7 @@ The full sentence is: A remote connection has access to all databases if it is u
 The line starting with local basically says that a local connection can be used with any user, if the password is provided. So here we can also login with the superuser. 
 ```
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
-host all paul 172.20.0.1/16 scram-sha-256
+host all paul 172.0.0.0/16 scram-sha-256
 local all all  scram-sha-256
 ```
 
