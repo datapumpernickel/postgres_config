@@ -14,12 +14,14 @@ Now we need to make sure that we know what kind of database we are creating. The
 
 Usually we set one superuser and then configure additional users who have less privileges. 
 
-- ./postgres_user.secret --> put the superuser name, usually this is "postgres"
-- ./postgres_password.secret --> put the password for the superuser
--  ./filla_db_user.secret --> make a new personal user name that you plan on using in the future
-- ./filla_db_password.secret --> set a password for your personal user
-- ./filla_db_database.secret --> set the name of the personal database you want to use in the future
+For this, you need to write the following files: 
+- postgres_user.secret --> put the superuser name, usually this is "postgres"
+- postgres_password.secret --> put the password for the superuser
+- filla_db_user.secret --> make a new personal user name that you plan on using in the future
+- filla_db_password.secret --> set a password for your personal user
+- filla_db_database.secret --> set the name of the personal database you want to use in the future
 
+These files are part of the .gitignore, so that you dont accidentally commit them to a public git repo. 
 
 We also implement some very basic security measures. When users are connecting remotely, they should not be able to login to the superuser. Hence, modify pg_hba.conf to disallow superuser with remote access. The user name here needs to match the username you specified in filla_db_user and the database could either be all or even better the one you specified in filla_db_database. 
 
