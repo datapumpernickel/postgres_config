@@ -25,6 +25,12 @@ These files are part of the .gitignore, so that you dont accidentally commit the
 
 We also implement some very basic security measures. When users are connecting remotely, they should not be able to login to the superuser. Hence, modify pg_hba.conf to disallow superuser with remote access. The user name here needs to match the username you specified in filla_db_user and the database could either be all or even better the one you specified in filla_db_database. 
 
+``` pg_hba.conf
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+host all paul 172.0.0.0/8 scram-sha-256
+local all all  scram-sha-256
+```
+
 This basically says: 
 - host: A remote connection
 - all: has access to all databases
@@ -35,11 +41,6 @@ This basically says:
 The full sentence is: A remote connection has access to all databases if it is user paul and comes from ip-ranges 172.0.0.0-172.255.255.255, (because docker lives here) if it provides a password.
 
 The line starting with local basically says that a local connection can be used with any user, if the password is provided. So here we can also login with the superuser. 
-```
-# TYPE  DATABASE        USER            ADDRESS                 METHOD
-host all paul 172.0.0.0/8 scram-sha-256
-local all all  scram-sha-256
-```
 
 
 
