@@ -53,12 +53,6 @@ init_user_and_db() {
 EOSQL
 }
 
-# Updates the pg_hba.conf file
-fill_pg_hba() {
-  local filla_db_user=$(cat "$FILLA_DB_USER")
-  local filla_db_database=$(cat "$FILLA_DB_DATABASE")
-  sudo echo "host $filla_db_database $filla_db_user 172.20.0.1/16 scram-sha-256" >> /etc/postgresconf_hba/pg_hba.conf
-}
 
 # Executes the main routine with environment variables
 # passed through the command line.
