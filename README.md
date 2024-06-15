@@ -27,7 +27,7 @@ This basically says:
 - host: A remote connection
 - all: has access to all databases
 - paul: if it is user paul
-- 172.0.0.0/8: and comes from ip-ranges 172.0.0.0-172.255.255.255, (because docker lives here)
+- 172.0.0.0/8: and comes from ip-ranges 172.0.0.0-172.255.255.255, (because docker lives somewhere here)
 - scram-sha-256: if it provides a password
 
 The full sentence is: A remote connection has access to all databases if it is user paul and comes from ip-ranges 172.0.0.0-172.255.255.255, (because docker lives here) if it provides a password.
@@ -48,29 +48,49 @@ docker-compose up -d
 ## install psql clinent
 sudo apt install postgresql-client
 
+
 ## check that it is online
-psql -h localhost -U postgres postgres -c "SELECT version();"
+psql -U postgres postgres -c "SELECT version();"
+
+## this should fail, because we only allow connections to postgres from local with:
+> connection to server at "localhost" (127.0.0.1), port 5432 failed: FATAL:  no pg_hba.conf entry for host "1
+
+## connect into docker container (check docker ps for ids of containers)
+docker exec -it eea67d609b0_your_docker_id_53313a6 bash 
+
+## run again
+psql -U postgres postgres -c "SELECT version();"
+
+## this should prompt for your password and connect
+
+## now check from the terminal of your computer where the database is running if you can access your user database
+psql -h localhost -U your_filla_db_username your_filla_db_database -c "SELECT version();"
 ```
 
 Now it should be up and running and everything should be configured. If we are on the server, it is locally available on port 5432. 
 
-Howver, usually we work on swp-r3 and want to access it remotely, hence we set up an ssh-tunnel like so: 
+However, the whole point was to have this accesible on a remote server, hence we set up an ssh-tunnel like so: 
 ```
-ssh -L 5432:localhost:5432 strato_development_paul
+ssh -L 5432:localhost:5432 server_name_configured_in_ssh_config
 ```
 
-Obviously, here strato_development_paul is only shorthand and you need to make sure your .ssh/config contains the respective keys and configurations for accessing the remote server. e.g. in my case: 
+Obviously, here server_name_configured_in_ssh_config is only shorthand and you need to make sure your .ssh/config contains the respective keys and configurations for accessing the remote server. e.g. in my case: 
 
 ```
-Host strato_development_paul
-  HostName 85.215.42.232
-  User paul
-  Port 20202
+Host server_name_configured_in_ssh_config
+  HostName 75.63.34.xxx
+  User some_user
+  Port some_port
 ```
 
 In R, you can now do: 
 
 ```
-con <- DBI::dbConnect(RPostgres::Postgres(),dbname = 'database', host = "localhost", port = "5432", user = "the_user_you _sepcified_in_filla", password = "the_password_you_specified_in_filla")
+con <- DBI::dbConnect(RPostgres::Postgres(),
+  dbname = 'database', 
+  host = "localhost", 
+  port = "5432", 
+  user = "the_user_you _sepcified_in_filla", 
+  password = "the_password_you_specified_in_filla")
 ```
 
