@@ -46,12 +46,12 @@ init_user_and_db() {
   local postgres_user=$(cat "$POSTGRES_USER_FILE")
 
   psql -v ON_ERROR_STOP=1 --username "$postgres_user" <<-EOSQL
-     CREATE USER $user WITH PASSWORD '$password' USING 'scram-sha-256';
+     CREATE USER $db_user WITH PASSWORD '$password' USING 'scram-sha-256';
      CREATE DATABASE $database;
-     GRANT ALL PRIVILEGES ON DATABASE $database TO $user;
-     GRANT USAGE ON SCHEMA public TO $user;
-     GRANT CREATE ON SCHEMA public TO $user;
-     ALTER DATABASE $database OWNER TO $user;
+     GRANT ALL PRIVILEGES ON DATABASE $database TO $db_user;
+     GRANT USAGE ON SCHEMA public TO $db_user;
+     GRANT CREATE ON SCHEMA public TO $db_user;
+     ALTER DATABASE $database OWNER TO $db_user;
 EOSQL
 }
 
