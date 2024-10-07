@@ -7,9 +7,9 @@ set -o errexit
 # that must be set. This can be consumed later via array
 # variable expansion ${REQUIRED_ENV_VARS[@]}.
 readonly REQUIRED_ENV_VARS=(
-  "FILLA_DB_USER"
-  "FILLA_DB_PASSWORD"
-  "FILLA_DB_DATABASE"
+  "DB_USER"
+  "DB_PASSWORD"
+  "DB_DATABASE"
 )
 
 # Main execution:
@@ -40,18 +40,18 @@ Aborting."
 # Performs the initialization in the already-started PostgreSQL
 # using the preconfigured POSTGRES_USER user.
 init_user_and_db() {
-  local filla_db_user=$(cat "$FILLA_DB_USER")
-  local filla_db_password=$(cat "$FILLA_DB_PASSWORD")
-  local filla_db_database=$(cat "$FILLA_DB_DATABASE")
+  local db_user=$(cat "$DB_USER")
+  local password=$(cat "$DB_PASSWORD")
+  local database=$(cat "$DB_DATABASE")
   local postgres_user=$(cat "$POSTGRES_USER_FILE")
 
   psql -v ON_ERROR_STOP=1 --username "$postgres_user" <<-EOSQL
-     CREATE USER $filla_db_user WITH PASSWORD '$filla_db_password';
-     CREATE DATABASE $filla_db_database;
-     GRANT ALL PRIVILEGES ON DATABASE $filla_db_database TO $filla_db_user;
-     GRANT USAGE ON SCHEMA public TO $filla_db_user;
-     GRANT CREATE ON SCHEMA public TO $filla_db_user;
-     ALTER DATABASE $filla_db_database OWNER TO $filla_db_user;
+     CREATE USER $user WITH PASSWORD '$password' USING 'scram-sha-256';
+     CREATE DATABASE $database;
+     GRANT ALL PRIVILEGES ON DATABASE $database TO $user;
+     GRANT USAGE ON SCHEMA public TO $user;
+     GRANT CREATE ON SCHEMA public TO $user;
+     ALTER DATABASE $database OWNER TO $user;
 EOSQL
 }
 
